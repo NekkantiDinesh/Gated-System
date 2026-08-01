@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Gatehouse Register</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+      :root {
+        --bg: #ede8da;
+        --panel: #f5f1e8;
+        --ink: #1a2332;
+        --text: #5b6472;
+        --muted: #8a8470;
+        --accent: #b8963e;
+        --purple: #8563b8;
+        --green: #3d7a5c;
+        --red: #b5433d;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Inter', sans-serif;
+      }
+
+      button, select, textarea, input { font: inherit; }
+
+      .app {
+        padding: 32px 16px;
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      .hero .eyebrow {
+        font-family: 'Space Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 6px;
+      }
+
+      .hero h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(24px, 4vw, 34px);
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .hero p {
+        color: var(--text);
+        font-size: 14px;
+        max-width: 600px;
+        margin: 8px auto 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+
+      .phone {
+        background: #1a2332;
+        border-radius: 34px;
+        padding: 10px;
+        width: 100%;
+        max-width: 380px;
+        margin: 0 auto;
+        box-shadow: 0 20px 50px rgba(26, 35, 50, 0.35);
+      }
+
+      .phone-inner {
+        background: var(--panel);
+        border-radius: 26px;
+        overflow: hidden;
+        min-height: 700px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .phone-notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 18px;
+        background: #1a2332;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        z-index: 5;
+      }
+
+      .phone-label {
+        text-align: center;
+        color: var(--accent);
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 10px;
+        margin-bottom: 2px;
+      }
+
+      .header {
+        background: #1a2332;
+        color: #f5f1e8;
+        padding: 22px 20px 16px;
+        padding-top: 30px;
+      }
+
+      .header-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        margin: 4px 0 0;
+      }
+
+      .subtle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-family: 'Space Mono', monospace;
+      }
+
+      .section-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .section-label > p {
+        font-size: 12px;
+        color: var(--text);
+        font-family: 'Space Mono', monospace;
+        letter-spacing: 0.05em;
+        margin: 0;
+      }
+
+      .pill {
+        background: var(--red);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 2px 8px;
+      }
+
+      .room-grid {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .room-btn,
+      .type-btn,
+      .action-btn,
+      .cancel-btn {
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+      }
+
+      .room-btn:hover,
+      .type-btn:hover,
+      .action-btn:hover,
+      .cancel-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .room-btn {
+        border: 1px solid #d8d0bc;
+        background: #fff;
+        color: #3a3f4b;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-family: 'Space Mono', monospace;
+        position: relative;
+      }
+
+      .room-btn.active {
+        border: 2px solid var(--accent);
+        background: var(--accent);
+        color: #1a2332;
+        font-weight: 700;
+      }
+
+      .room-btn .dot {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--purple);
+        border: 1.5px solid var(--panel);
+      }
+
+      .type-btn {
+        border: 1px solid #d8d0bc;
+        background: #fff;
+        color: #3a3f4b;
+        padding: 6px 10px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .type-btn.active {
+        border: 2px solid #1a2332;
+        background: #1a2332;
+        color: #f5f1e8;
+      }
+
+      .panel {
+        padding: 16px 20px;
+        flex: 0 0 auto;
+      }
+
+      textarea,
+      select {
+        width: 100%;
+        resize: none;
+        border: 1px solid #d8d0bc;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+        color: var(--ink);
+        background: #fff;
+      }
+
+      .action-btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .action-btn.primary { background: #1a2332; }
+      .action-btn.purple { background: var(--purple); }
+      .action-btn.green { background: var(--green); }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e4dfcf;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+      }
+
+      .card.purple-card {
+        background: #f1ebfa;
+        border-color: #d6c6ee;
+      }
+
+      .card.gold-card {
+        background: #fff8e9;
+        border-color: #e9d9a8;
+      }
+
+      .stamp {
+        border: 3px double;
+        border-radius: 6px;
+        padding: 3px 10px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: inline-block;
+        transform: rotate(-6deg);
+        background: rgba(255,255,255,0.4);
+        whiteSpace: nowrap;
+      }
+
+      .stamp.approved { color: var(--green); border-color: var(--green); }
+      .stamp.preapproved { color: var(--purple); border-color: var(--purple); }
+      .stamp.pending { color: var(--red); border-color: var(--red); }
+
+      .empty {
+        text-align: center;
+        padding: 20px 8px;
+        color: var(--muted);
+      }
+
+      .footer-note {
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 24px;
+      }
+
+      .resident-select-wrap {
+        position: relative;
+      }
+
+      .resident-select {
+        appearance: none;
+        background: #2b3648;
+        color: #f5f1e8;
+        border: 1px solid #435068;
+        border-radius: 6px;
+        padding: 5px 26px 5px 10px;
+        font-family: 'Space Mono', monospace;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .resident-select-wrap svg {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .soft-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .soft-row h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .list-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+      }
+
+      .list-row .meta {
+        flex: 1;
+      }
+
+      .list-row p {
+        margin: 0;
+      }
+
+      .list-row .small {
+        font-size: 12px;
+        color: var(--text);
+      }
+
+      .list-row .tiny { font-size: 10px; color: var(--muted); }
+
+      .stack { display: flex; flex-direction: column; gap: 8px; }
+
+      .small-gap { display: flex; gap: 8px; }
+
+      .small-gap > * { flex: 1; }
+
+      .muted { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const WINGS = {
+        A: ["101", "102", "103", "104"],
+        B: ["201", "202", "203", "204"],
+      };
+
+      const ALL_ROOMS = Object.entries(WINGS).flatMap(([wing, nums]) => nums.map((n) => `${wing}-${n}`));
+
+      const VISITOR_TYPES = [
+        { id: "courier", label: "Courier", emoji: "📦" },
+        { id: "delivery", label: "Food delivery", emoji: "🚚" },
+        { id: "cab", label: "Cab / auto", emoji: "🚗" },
+        { id: "guest", label: "Guest", emoji: "👤" },
+        { id: "other", label: "Other", emoji: "⋯" },
+      ];
+
+      function typeLabel(id) {
+        return VISITOR_TYPES.find((t) => t.id === id)?.label || "Visitor";
+      }
+
+      function typeEmoji(id) {
+        return VISITOR_TYPES.find((t) => t.id === id)?.emoji || "👤";
+      }
+
+      function timeNow() {
+        const d = new Date();
+        return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      }
+
+      const state = {
+        visits: [],
+        preApprovals: [],
+        watchmanRoom: ALL_ROOMS[0],
+        watchmanType: "courier",
+        watchmanNote: "",
+        residentRoom: ALL_ROOMS[0],
+        expectOpen: false,
+        expectType: "guest",
+        expectNote: "",
+        visitId: 1,
+        preId: 1,
+      };
+
+      function render() {
+        const app = document.getElementById("app");
+        const activePreApprovalForWatchmanRoom = state.preApprovals.find((p) => p.room === state.watchmanRoom && !p.used);
+        const pendingForResident = state.visits.filter((v) => v.room === state.residentRoom && v.status === "pending");
+        const historyForResident = state.visits.filter((v) => v.room === state.residentRoom && v.status === "approved");
+        const activePreApprovalsForResident = state.preApprovals.filter((p) => p.room === state.residentRoom && !p.used);
+        const pendingCount = state.visits.filter((v) => v.status === "pending").length;
+
+        app.innerHTML = `
+          <div class="app">
+            <div class="wrap">
+              <div class="hero">
+                <p class="eyebrow">Prototype — two devices, one register</p>
+                <h1>The Gatehouse Register</h1>
+                <p>The watchman's phone is on the left, the resident's on the right. Try sending an expected visitor from the resident side first, then log that same room's arrival on the watchman side.</p>
+              </div>
+
+              <div class="grid">
+                <div class="phone">
+                  <div class="phone-inner">
+                    <div class="phone-notch"></div>
+                    <div class="header">
+                      <div class="subtle">🛡️ Logged in as watchman</div>
+                      <h2 class="header-title">Log an arrival</h2>
+                    </div>
+
+                    <div class="panel">
+                      <div class="section-label">
+                        <p>ROOM</p>
+                      </div>
+                      ${Object.entries(WINGS).map(([wing, nums]) => `
+                        <div style="margin-bottom:8px;">
+                          <p style="font-size:11px;color:#8a8470;margin-bottom:6px;">Wing ${wing}</p>
+                          <div class="room-grid">
+                            ${nums.map((n) => {
+                              const room = `${wing}-${n}`;
+                              const active = state.watchmanRoom === room;
+                              const hasPreApproval = state.preApprovals.some((p) => p.room === room && !p.used);
+                              return `
+                                <button class="room-btn ${active ? "active" : ""}" data-action="setWatchmanRoom" data-value="${room}">
+                                  ${room}
+                                  ${hasPreApproval ? '<span class="dot"></span>' : ""}
+                                </button>
+                              `;
+                            }).join("")}
+                          </div>
+                        </div>
+                      `).join("")}
+
+                      <div style="margin-top:12px;">
+                        <div class="section-label">
+                          <p>WHO'S HERE</p>
+                        </div>
+                        <div class="room-grid">
+                          ${VISITOR_TYPES.map((t) => `
+                            <button class="type-btn ${state.watchmanType === t.id ? "active" : ""}" data-action="setWatchmanType" data-value="${t.id}">
+                              <span>${t.emoji}</span>
+                              ${t.label}
+                            </button>
+                          `).join("")}
+                        </div>
+                      </div>
+
+                      <div style="margin-top:12px;">
+                        <div class="section-label">
+                          <p>DETAILS (OPTIONAL)</p>
+                        </div>
+                        <textarea data-bind="watchmanNote" rows="2" placeholder="e.g. Amazon package, ID confirmed">${state.watchmanNote}</textarea>
+                      </div>
+
+                      ${activePreApprovalForWatchmanRoom ? `
+                        <div class="card purple-card" style="margin-top:12px;">
+                          <div class="subtle" style="margin-bottom:4px;color:#5b3e8c;">
+                            ✨ <span>${state.residentRoom === state.watchmanRoom ? "This" : "Room " + state.watchmanRoom}'s resident is expecting a ${typeLabel(activePreApprovalForWatchmanRoom.type).toLowerCase()}</span>
+                          </div>
+                          ${activePreApprovalForWatchmanRoom.note ? `<p style="margin:0 0 8px;font-size:12px;color:#5b6472;">"${activePreApprovalForWatchmanRoom.note}"</p>` : ""}
+                          <button class="action-btn purple" data-action="logArrival">
+                            ✅ Let them in — already approved
+                          </button>
+                        </div>
+                      ` : `
+                        <button class="action-btn primary" style="margin-top:14px;" data-action="logArrival">
+                          ➤ Notify room ${state.watchmanRoom}
+                        </button>
+                      `}
+                    </div>
+
+                    <div style="border-top:1px dashed #d8d0bc;padding:14px 20px;overflow-y:auto;flex:1;">
+                      <div class="section-label">
+                        <p>TODAY'S LOG</p>
+                        ${pendingCount > 0 ? `<span class="pill">${pendingCount} waiting</span>` : ""}
+                      </div>
+
+                      ${state.visits.length === 0 ? `
+                        <div class="empty">
+                          <div style="margin-bottom:8px;opacity:0.5;">📥</div>
+                          <p style="margin:0;font-size:13px;">No arrivals logged yet.</p>
+                        </div>
+                      ` : state.visits.map((v) => `
+                        <div class="card">
+                          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+                            <div>
+                              <div style="display:flex;align-items:center;gap:6px;">
+                                <span>${typeEmoji(v.type)}</span>
+                                <p style="margin:0;font-family:'Space Mono', monospace;font-weight:700;font-size:13px;color:#1a2332;">Room ${v.room}</p>
+                              </div>
+                              <p style="margin:2px 0 0;font-size:11px;color:#8a8470;">${typeLabel(v.type)} · ${v.sentAt}${v.approvedAt ? ` · in at ${v.approvedAt}` : ""}</p>
+                              ${v.note ? `<p style="margin:4px 0 0;font-size:12px;color:#5b6472;">${v.note}</p>` : ""}
+                            </div>
+                            <span class="stamp ${v.status === "approved" ? (v.preApproved ? "preapproved" : "approved") : "pending"}">${v.status === "approved" ? (v.preApproved ? "Pre-approved" : "Let in") : "Waiting"}</span>
+                          </div>
+                        </div>
+                      `).join("")}
+                    </div>
+                  </div>
+                  <p class="phone-label">Watchman · Gatehouse App</p>
+                </div>
+
+                <div class="phone">
+                  <div class="phone-inner">
+                    <div class="phone-notch"></div>
+                    <div class="header">
+                      <div class="subtle">🏠 Logged in as resident</div>
+                      <div class="soft-row">
+                        <h2>Room</h2>
+                        <div class="resident-select-wrap">
+                          <select data-bind="residentRoom">
+                            ${ALL_ROOMS.map((r) => `<option value="${r}" ${state.residentRoom === r ? "selected" : ""}>${r}</option>`).join("")}
+                          </select>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+                      </div>
+                      <p class="muted">Switch rooms above to see a different resident's phone.</p>
+                    </div>
+
+                    <div class="panel">
+                      ${state.expectOpen ? `
+                        <div class="card" style="padding:12px;">
+                          <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#1a2332;">Tell the watchman who's coming</p>
+                          <div class="room-grid" style="margin-bottom:8px;">
+                            ${VISITOR_TYPES.map((t) => `
+                              <button class="type-btn ${state.expectType === t.id ? "active" : ""}" data-action="setExpectType" data-value="${t.id}">
+                                <span>${t.emoji}</span>
+                                ${t.label}
+                              </button>
+                            `).join("")}
+                          </div>
+                          <textarea data-bind="expectNote" rows="2" placeholder="e.g. Ramesh, my college friend, arriving around 6pm">${state.expectNote}</textarea>
+                          <div class="small-gap" style="margin-top:8px;">
+                            <button class="cancel-btn" data-action="cancelExpect" style="flex:1;background:#fff;border:1px solid #d8d0bc;border-radius:8px;padding:9px;font-size:13px;">Cancel</button>
+                            <button class="action-btn purple" data-action="sendPreApproval" style="flex:2;padding:9px;">Send to watchman</button>
+                          </div>
+                        </div>
+                      ` : `
+                        <button class="action-btn" data-action="openExpect" style="background:#fff;border:1px dashed #b8963e;color:#8a6d1f;">
+                          🗓️ Expecting someone? Let the watchman know
+                        </button>
+                      `}
+
+                      ${activePreApprovalsForResident.length > 0 ? `
+                        <div style="margin-top:10px;">
+                          ${activePreApprovalsForResident.map((p) => `
+                            <div class="list-row purple-card">
+                              <span>${typeEmoji(p.type)}</span>
+                              <div class="meta">
+                                <p style="font-size:12px;font-weight:600;color:#5b3e8c;">Expecting a ${typeLabel(p.type).toLowerCase()}</p>
+                                ${p.note ? `<p class="small">${p.note}</p>` : ""}
+                              </div>
+                              <span class="tiny">sent ${p.createdAt}</span>
+                            </div>
+                          `).join("")}
+                        </div>
+                      ` : ""}
+                    </div>
+
+                    <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+                      <div class="section-label">
+                        <p>AT THE GATE NOW</p>
+                      </div>
+
+                      ${pendingForResident.length === 0 ? `
+                        <div class="empty">
+                          <div style="margin-bottom:8px;opacity:0.5;">🔔</div>
+                          <p style="margin:0;font-size:13px;">No one's waiting for you right now.</p>
+                        </div>
+                      ` : pendingForResident.map((v) => `
+                        <div class="card gold-card" style="padding:14px;margin-bottom:12px;">
+                          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <span>${typeEmoji(v.type)}</span>
+                            <p style="margin:0;font-weight:600;font-size:14px;color:#1a2332;">${typeLabel(v.type)} at the gate for you</p>
+                          </div>
+                          ${v.note ? `<p style="margin:0 0 8px;font-size:12px;color:#3a3f4b;">${v.note}</p>` : ""}
+                          <p style="margin:0 0 10px;font-size:12px;color:#5b6472;">🕒 Logged at ${v.sentAt} by the watchman</p>
+                          <button class="action-btn green" data-action="approveVisit" data-value="${v.id}">✅ Approve and let them in</button>
+                        </div>
+                      `).join("")}
+
+                      ${historyForResident.length > 0 ? `
+                        <div style="margin-top:18px;">
+                          <p style="font-size:12px;color:#5b6472;font-family:'Space Mono', monospace;letter-spacing:0.05em;margin:0 0 10px;">LET IN TODAY</p>
+                          ${historyForResident.map((v) => `
+                            <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                              <div>
+                                <p style="margin:0;font-size:13px;color:#1a2332;">${typeLabel(v.type)}${v.note ? ` · ${v.note}` : ""}</p>
+                                <p style="margin:2px 0 0;font-size:11px;color:#8a8470;">${v.approvedAt}</p>
+                              </div>
+                              <span class="stamp ${v.preApproved ? "preapproved" : "approved"}">${v.preApproved ? "Pre-approved" : "Let in"}</span>
+                            </div>
+                          `).join("")}
+                        </div>
+                      ` : ""}
+                    </div>
+                  </div>
+                  <p class="phone-label">Resident · Owner App</p>
+                </div>
+              </div>
+
+              <p class="footer-note">This is a click-through demo. All data lives only in this browser tab and resets on reload.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function handleClick(event) {
+        const target = event.target.closest("button");
+        if (!target) return;
+
+        const action = target.dataset.action;
+        if (action === "setWatchmanRoom") {
+          state.watchmanRoom = target.dataset.value;
+          render();
+        } else if (action === "setWatchmanType") {
+          state.watchmanType = target.dataset.value;
+          render();
+        } else if (action === "logArrival") {
+          const match = state.preApprovals.find((p) => p.room === state.watchmanRoom && !p.used);
+          const entry = {
+            id: state.visitId++,
+            room: state.watchmanRoom,
+            type: state.watchmanType,
+            note: state.watchmanNote.trim(),
+            status: match ? "approved" : "pending",
+            sentAt: timeNow(),
+            approvedAt: match ? timeNow() : null,
+            preApproved: Boolean(match),
+          };
+          state.visits.unshift(entry);
+          if (match) {
+            state.preApprovals = state.preApprovals.map((p) => (p.id === match.id ? { ...p, used: true } : p));
+          }
+          state.watchmanNote = "";
+          render();
+        } else if (action === "setExpectType") {
+          state.expectType = target.dataset.value;
+          render();
+        } else if (action === "openExpect") {
+          state.expectOpen = true;
+          render();
+        } else if (action === "cancelExpect") {
+          state.expectOpen = false;
+          render();
+        } else if (action === "sendPreApproval") {
+          const entry = {
+            id: state.preId++,
+            room: state.residentRoom,
+            type: state.expectType,
+            note: state.expectNote.trim(),
+            createdAt: timeNow(),
+            used: false,
+          };
+          state.preApprovals.unshift(entry);
+          state.expectNote = "";
+          state.expectOpen = false;
+          render();
+        } else if (action === "approveVisit") {
+          const id = Number(target.dataset.value);
+          state.visits = state.visits.map((v) => (v.id === id ? { ...v, status: "approved", approvedAt: timeNow() } : v));
+          render();
+        }
+      }
+
+      function handleInput(event) {
+        const target = event.target;
+        if (target.dataset.bind === "watchmanNote") {
+          state.watchmanNote = target.value;
+        } else if (target.dataset.bind === "expectNote") {
+          state.expectNote = target.value;
+        } else if (target.dataset.bind === "residentRoom") {
+          state.residentRoom = target.value;
+          render();
+        }
+      }
+
+      document.addEventListener("click", handleClick);
+      document.addEventListener("input", handleInput);
+      document.addEventListener("change", handleInput);
+      render();
+    </script>
+  </body>
+</html>
